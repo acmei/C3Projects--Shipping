@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150818214000) do
+ActiveRecord::Schema.define(version: 20150818233250) do
 
   create_table "api_responses", force: :cascade do |t|
     t.datetime "created_at", null: false
@@ -43,8 +43,15 @@ ActiveRecord::Schema.define(version: 20150818214000) do
   add_index "origins", ["api_response_id"], name: "index_origins_on_api_response_id"
 
   create_table "packages", force: :cascade do |t|
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.float    "weight",          null: false
+    t.float    "height",          null: false
+    t.float    "width",           null: false
+    t.float    "depth",           null: false
+    t.integer  "api_response_id"
+    t.datetime "created_at",      null: false
+    t.datetime "updated_at",      null: false
   end
+
+  add_index "packages", ["api_response_id"], name: "index_packages_on_api_response_id"
 
 end

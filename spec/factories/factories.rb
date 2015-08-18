@@ -32,12 +32,12 @@ FactoryGirl.define do
     zip "60652"
     api_response_id 1
   end
-  # 
-  # factory :package do
-  #   size 100
-  #   height 5
-  #   width 200
-  #   depth 15
-  #   api_response_id 1
-  # end
+  
+  factory :package do
+    weight 100
+    height 5.5
+    width 200.25
+    depth 15.4
+    api_response_id 1
+  end
 end
