@@ -1,4 +1,26 @@
 Anita & Jeri - Team FedAx
+- don't have to integrate tracking information, but if an API returns it, we should add that info for the user
+- may have to add functionality to betsy to get a weight for a product
+  - items could have size attributes, which determine shipping characteristics
+  - then you have a routine to figure out what that total would be
+- add a column to account for carrier (maybe also tracking number?)
+- checkout flow changes:
+  - if user hasn't already estimated shipping costs, display a confirmation page that shows the adjusted price with shipping costs included
+  - allow the user to click an estimate shipping button in the cart
+    - to generate a form that will get the required info for calculating shipping
+    - and then display updated shipping cost / total for order including shipping costs
+- model in Shipping API to cache shipping results
+- __once a user picks something, make a second API call back to FedAx to say, hey, the user picked this one.__
+  - you don't have to track the ones they don't pick.
+
+- spinning up two servers.
+  - `rails s` starts a server on 3000
+  - `rails s -p 3001` starts a server or 3001
+
+shipping providers:
+- kunika - CD/DVD manufacturer and shipper. __not just shipping__ & _probably not a viable shipping option_.
+
+
 
 # Shipping!
 Build a stand-alone shipping service API that calculates estimated shipping cost for an order from another team's bEtsy application.
