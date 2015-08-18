@@ -1,5 +1,8 @@
 source 'https://rubygems.org'
 
+# use dotenv to store secrets
+gem 'dotenv-rails', :groups => [:development, :test] 
+
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '4.2.3'
 # Use SCSS for stylesheets
@@ -33,9 +36,6 @@ gem 'active_shipping'
 # gem 'capistrano-rails', group: :development
 
 group :development, :test do
-	# use dotenv to store secrets
-	gem "dotenv"
-
 	# Use sqlite3 as the database for Active Record
 	gem 'sqlite3'
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
