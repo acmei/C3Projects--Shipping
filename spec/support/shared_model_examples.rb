@@ -20,6 +20,26 @@ RSpec.shared_examples "address" do
       expect(address.errors.keys).not_to include(:country)
       expect(countryless_address.country).to eq('US')
     end
+
+    valid_zips = ["12345", "98019", "02930"]
+
+    valid_zips.each do |valid_zip|
+      it "requires a valid 5-digit zip: #{valid_zip}" do
+        address.zip = valid_zip
+        expect(address).to be_valid
+        expect(address.errors.keys).not_to include(:zip)
+      end
+    end
+
+    invalid_zips = ["9382", "31", "zipco"]
+
+    invalid_zips.each do |invalid_zip|
+      it "does not validate an non-5-digit zip: #{invalid_zip}" do
+        address.zip = invalid_zip
+        expect(address).to be_invalid
+        expect(address.errors.keys).to include(:zip)
+      end
+    end
   end
 
   describe "model associations" do
