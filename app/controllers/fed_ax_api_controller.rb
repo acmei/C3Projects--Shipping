@@ -3,9 +3,18 @@ class FedAxApiController < ApplicationController
     # code to take in params for making a shipping quote here
     # should return successful with quote content if APIs respond with quotes
     result = { quotes: [
-      "words words words --a great old one",
-      "phenglui mclunaugh wgangan fhtaghn --cultist"
-      ]}
+      {
+        "carrier": "bats united",
+        "total_cost": "10 pounds of fruit and nuts",
+        "service_type": "10-day air service"
+      },
+      {
+        "carrier": "drone pigeons",
+        "total_cost": "6 pounds of grains, seeds, and berries",
+        "service_type": "7-day ground service"
+      }
+    ]}
+    
     # should return successful with no quote content if APIs queried do not ship to or from said location
     render json: result, status: :ok
   end
