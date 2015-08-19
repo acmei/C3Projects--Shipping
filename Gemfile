@@ -1,7 +1,7 @@
 source 'https://rubygems.org'
 
 # use dotenv to store secrets
-gem 'dotenv-rails', :groups => [:development, :test] 
+gem 'dotenv-rails', :groups => [:development, :test]
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '4.2.3'
@@ -35,7 +35,13 @@ gem 'active_shipping'
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
 
+# for testing APIs
+gem "webmock", group: :test
+
 group :development, :test do
+	# For testing APIs
+	gem "vcr"
+
 	# Use sqlite3 as the database for Active Record
 	gem 'sqlite3'
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
@@ -64,6 +70,5 @@ group :development, :test do
 	gem 'factory_girl_rails', '~> 4.0'
 end
 
-group :production do
-  gem 'pg'
-end
+# production database
+gem 'pg', group: :production
