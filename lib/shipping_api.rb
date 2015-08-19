@@ -2,10 +2,15 @@ module FedAxApiWrapper
   class ShippingApi
     def self.query(delivery_info)
       quotes = []
-
       full_response = self.ups_query(delivery_info)
       quotes.push self.extract_data_from_response(full_response)
-      response = { quotes: quotes, message: "great!", status: 200 }.to_json
+
+      if quotes.empty?
+        response = { message: "not great! no content!", status: 204}.to_json
+      else
+        quotes.flatten!
+        response = { quotes: quotes, message: "great!", status: 200 }.to_json
+      end
     end
 
     def self.extract_data_from_response(response)
@@ -14,10 +19,6 @@ module FedAxApiWrapper
 
       rates.each do |rate|
         result = {}
-        # "carrier": "bats united",
-        # "total_cost": "10 pounds of fruit and nuts",
-        # "service_type": "10-day air service"
-
         result["carrier"] = rate.carrier # "UPS"
         result["total_cost"] = rate.total_price / 100.0 # price in cents
         result["service_type"] = rate.service_name # "UPS Ground"
@@ -25,6 +26,8 @@ module FedAxApiWrapper
 
         combined_results.push(result)
       end
+
+      combined_results.flatten!
 
       return combined_results
     end

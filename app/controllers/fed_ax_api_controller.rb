@@ -1,28 +1,28 @@
-require "#{ Rails.root }/lib/ShippingApi.rb"
+require "#{ Rails.root }/lib/shipping_api.rb"
 
 class FedAxApiController < ApplicationController
   include FedAxApiWrapper
 
   def quote
-    # code to take in params for making a shipping quote here
-    quotes = ShippingApi.query(shipping_params)
+    begin
+      # code to take in params for making a shipping quote here
+      json_quotes = ShippingApi.query(shipping_params)
 
-    # should return successful with quote content if APIs respond with quotes
-    result = { quotes: [
-      {
-        "carrier": "bats united",
-        "total_cost": "10 pounds of fruit and nuts",
-        "service_type": "10-day air service"
-      },
-      {
-        "carrier": "drone pigeons",
-        "total_cost": "6 pounds of grains, seeds, and berries",
-        "service_type": "7-day ground service"
-      }
-    ]}
+      # convert to ruby
+      quotes = JSON.parse json_quotes
 
-    # should return successful with no quote content if APIs queried do not ship to or from said location
-    render json: quotes, status: :ok
+      # should return successful with quote content if APIs respond with quotes
+      if quotes["status"] == 200 # OPTIMIZE: is this the best way to handle response status from the API Wrapper?
+        render json: quotes, status: :ok
+
+      # should return successful with no quote content if APIs queried do not ship to or from said location
+      else quotes["status"] == 204 # OPTIMIZE: is this the best way to handle response status from the API Wrapper?
+        render json: quotes, status: :no_content
+      end
+
+    rescue ActionController::ParameterMissing
+      render json: { message: "error BAD PARAMS YO" }, status: :bad_request # FIXME: I need a better error message
+    end
   end
 
   def ship
@@ -36,8 +36,9 @@ class FedAxApiController < ApplicationController
   private
     def shipping_params
       result = {}
-      result[:packages] = params.require(:packages => [:size, :height, :width, :depth])
+      result[:packages] = params.require(:packages)
       result[:origin] = params.require(:origin).permit(:country, :state, :city, :zip)
       result[:destination] = params.require(:destination).permit(:country, :state, :city, :zip)
+      return result
     end
 end
