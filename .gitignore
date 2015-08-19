@@ -16,8 +16,11 @@
 !/log/.keep
 /tmp
 
+# these are not the droids you're looking for
 .DS_Store
 /coverage
 
+# hide my secrets, hide my wife
 /.env
 /.active_shipping
+/spec/vcr
