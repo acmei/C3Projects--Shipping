@@ -54,7 +54,7 @@
 
 `response = carrier.find_rates(origin, destination, packages)`
 
-services codes - `response["Response"]["RatedShipment"]["Service"]["Code"]`
+services codes  
 - 03 = UPS Ground
 - 12 = UPS Three-Day Select
 - 02 = UPS Second Day Air
@@ -62,10 +62,13 @@ services codes - `response["Response"]["RatedShipment"]["Service"]["Code"]`
 - 13 = UPS Next Day Air Saver
 - 01 = UPS Next Day Air
 
-cost - `response["Response"]["RatedShipment"]["TotalCharges"]["MonetaryValue"]`
-- per pkg
-  - `pkgs = response["Response"]["RatedShipment"]["RatedPackage"]` an array of individual packages
-  - on an item in the array `pkg["TotalCharges"]["MonetaryValue"]`
+service name - `response.rates.first.service_name`  
+
+service code - `response.rates.first.service_code`
+
+cost - `response.rates.first.total_price` price in cents
+
+delivery_date - `response.rates.first.delivery_date` estimated delivery date
 
 
 > ## original response from API

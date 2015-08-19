@@ -1,6 +1,12 @@
+require "#{ Rails.root }/lib/ShippingApi.rb"
+
 class FedAxApiController < ApplicationController
+  include FedAxApiWrapper
+
   def quote
     # code to take in params for making a shipping quote here
+    quotes = ShippingApi.query(shipping_params)
+
     # should return successful with quote content if APIs respond with quotes
     result = { quotes: [
       {
@@ -14,9 +20,9 @@ class FedAxApiController < ApplicationController
         "service_type": "7-day ground service"
       }
     ]}
-    
+
     # should return successful with no quote content if APIs queried do not ship to or from said location
-    render json: result, status: :ok
+    render json: quotes, status: :ok
   end
 
   def ship
@@ -26,4 +32,12 @@ class FedAxApiController < ApplicationController
     # should return not successful if there is a problem with processing
     render json: {}, status: :ok
   end
+
+  private
+    def shipping_params
+      result = {}
+      result[:packages] = params.require(:packages => [:size, :height, :width, :depth])
+      result[:origin] = params.require(:origin).permit(:country, :state, :city, :zip)
+      result[:destination] = params.require(:destination).permit(:country, :state, :city, :zip)
+    end
 end

@@ -1,9 +1,9 @@
 require 'rails_helper'
 
 RSpec.describe FedAxApiController, type: :controller do
-  let(:valid_package) { true }
-  let(:valid_origin) { true }
-  let(:valid_destination) { true }
+  let(:valid_package) { size: "1.5", height: "1.5", width: "1.5", depth: "1.5" }
+  let(:valid_origin) { county: "US", state: "WA", city: "Houston", zip: "60652" }
+  let(:valid_destination) { county: "US", state: "OH", city: "Boise", zip: "20002" }
   let(:origin_out_of_area) { false }
   let(:destination_out_of_area) { false }
 
@@ -89,7 +89,14 @@ RSpec.describe FedAxApiController, type: :controller do
       end
 
       context "missing parameters" do
-        it "responds with a ??? error code"
+        before :each do
+          get :quote
+        end
+
+        it "responds with a bad request status" do
+          expect(response).to have_http_status 400
+        end
+
         context "the returned json object" do
           before :each do
             @response = JSON.parse response.body
@@ -106,7 +113,14 @@ RSpec.describe FedAxApiController, type: :controller do
       end
 
       context "invalid parameters" do
-        it "responds with a ??? error code"
+        before :each do
+          get :quote, packages: invalid_packages, origin: invalid_origin, destination: invalid_destination
+        end
+
+        it "responds with a bad request status" do
+          expect(response).to have_http_status 400
+        end
+
         context "the returned json object" do
           before :each do
             @response = JSON.parse response.body
@@ -123,7 +137,14 @@ RSpec.describe FedAxApiController, type: :controller do
       end
 
       context "missing client key ???" do
-        it "responds with a ??? error code"
+        before :each do
+          get :quote, packages: valid_packages, origin: valid_origin, destination: valid_destination
+        end
+
+        it "responds with a bad request status" do
+          expect(response).to have_http_status 400
+        end
+
         context "the returned json object" do
           before :each do
             @response = JSON.parse response.body
