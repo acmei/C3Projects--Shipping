@@ -28,13 +28,34 @@ RSpec.describe FedAxApiController, type: :controller do
 
         it "contains a success code ???"
 
-        it "contains an array of quote data" do
-          expect(@response["quote"]).to_not be_nil
-          # TODO: more
+        it "contains an array of quotes" do
+          expect(@response["quotes"].class).to eq Array
+          # TODO: more?
         end
 
-        it "includes only these specific keys: ????"
-        it "includes quote data only for the shippers requested"
+        context "each quote in the quotes array" do
+          before :each do
+            @quotes = @response["quotes"]
+          end
+
+          it "contains the total cost of shipping" do
+            @quotes.each do |quote|
+              expect(quote["total_cost"]).to_not be_nil
+            end
+          end
+
+          it "contains a description of the service type" do
+            @quotes.each do |quote|
+              expect(quote["service_type"]).to_not be_nil
+            end
+          end
+
+          it "has a carrier" do
+            @quotes.each do |quote|
+              expect(quote["carrier"]).to_not be_nil
+            end
+          end
+        end
       end
     end
 
@@ -61,8 +82,8 @@ RSpec.describe FedAxApiController, type: :controller do
             expect(@response["message"]).to include("error")
           end
 
-          it "does not include quote data" do
-            expect(@response["quote"]).to be_nil
+          it "does not include quotes" do
+            expect(@response["quotes"]).to be_nil
           end
         end
       end
@@ -78,8 +99,8 @@ RSpec.describe FedAxApiController, type: :controller do
             expect(@response["message"]).to include("error")
           end
 
-          it "does not include quote data" do
-            expect(@response["quote"]).to be_nil
+          it "does not include quotes" do
+            expect(@response["quotes"]).to be_nil
           end
         end
       end
@@ -95,8 +116,8 @@ RSpec.describe FedAxApiController, type: :controller do
             expect(@response["message"]).to include("error")
           end
 
-          it "does not include quote data" do
-            expect(@response["quote"]).to be_nil
+          it "does not include quotes" do
+            expect(@response["quotes"]).to be_nil
           end
         end
       end
@@ -112,8 +133,8 @@ RSpec.describe FedAxApiController, type: :controller do
             expect(@response["message"]).to include("error")
           end
 
-          it "does not include quote data" do
-            expect(@response["quote"]).to be_nil
+          it "does not include quotes" do
+            expect(@response["quotes"]).to be_nil
           end
         end
       end
@@ -122,6 +143,10 @@ RSpec.describe FedAxApiController, type: :controller do
 
   describe "POST #ship" do
     context "valid input" do
+      before :each do
+        post :ship, package: valid_package, origin: valid_origin, destination: valid_destination
+      end
+
       it "responds successfully" do
         expect(response).to have_http_status 200
       end
@@ -137,16 +162,44 @@ RSpec.describe FedAxApiController, type: :controller do
         before :each do
           @response = JSON.parse response.body
         end
-        
+
         it "returns a shipped status code maybe?"
 
-        it "contains an array of quote data" do
-          expect(@response["quote"]).to_not be_nil
+        it "contains an array of quotes" do
+          expect(@response["quote"].class).to eq Array
           # TODO: more
         end
 
-        it "includes only these specific keys: ????"
-        it "includes quote data only for the shippers requested"
+        context "each quote in the quotes array" do
+          before :each do
+            @quotes = @response["quotes"]
+          end
+
+          it "contains the total cost of shipping" do
+            @quotes.each do |quote|
+              expect(quote["total_cost"]).to_not be_nil
+            end
+          end
+
+          it "contains a description of the service type" do
+            @quotes.each do |quote|
+              expect(quote["service_type"]).to_not be_nil
+            end
+          end
+
+          it "has a carrier" do
+            @quotes.each do |quote|
+              expect(quote["carrier"]).to_not be_nil
+            end
+          end
+
+          it "contains tracking information where available" do
+            @quotes.each do |quote|
+              # FIXME: this is made up. not sure yet which carriers offer tracking info
+              expect(quote["tracking_info"]).to_not be_nil if quote["carrier"] == "UPS"
+            end
+          end
+        end
       end
     end
 
@@ -173,8 +226,8 @@ RSpec.describe FedAxApiController, type: :controller do
             expect(@response["message"]).to include("error")
           end
 
-          it "does not include quote data" do
-            expect(@response["quote"]).to be_nil
+          it "does not include quotes" do
+            expect(@response["quotes"]).to be_nil
           end
         end
       end
@@ -190,8 +243,8 @@ RSpec.describe FedAxApiController, type: :controller do
             expect(@response["message"]).to include("error")
           end
 
-          it "does not include quote data" do
-            expect(@response["quote"]).to be_nil
+          it "does not include quotes" do
+            expect(@response["quotes"]).to be_nil
           end
         end
       end
@@ -207,8 +260,8 @@ RSpec.describe FedAxApiController, type: :controller do
             expect(@response["message"]).to include("error")
           end
 
-          it "does not include quote data" do
-            expect(@response["quote"]).to be_nil
+          it "does not include quotes" do
+            expect(@response["quotes"]).to be_nil
           end
         end
       end
@@ -224,8 +277,8 @@ RSpec.describe FedAxApiController, type: :controller do
             expect(@response["message"]).to include("error")
           end
 
-          it "does not include quote data" do
-            expect(@response["quote"]).to be_nil
+          it "does not include quotes" do
+            expect(@response["quotes"]).to be_nil
           end
         end
       end
