@@ -36,7 +36,15 @@ class FedAxApiController < ApplicationController
   private
     def shipping_params
       result = {}
-      result[:packages] = params.require(:packages)
+      # Long version:
+      #   Changing the next line of code to use params.require(:packages => [])
+      #   or params.require(:packages) returns the array, which Strong
+      #   Parameters no longer recognizes as a params object -- so attempting
+      #   to permit the nested objects' attributes won't work.
+      # Short version:
+      #   Strong Parameters doesn't handle arrays of nested objects very well:
+      #   NoMethodError: undefined method `permit' for #<Array:0x007f894dd8c830>
+      result[:packages] = params.permit(:packages => [:weight, :width, :height, :depth])[:packages]
       result[:origin] = params.require(:origin).permit(:country, :state, :city, :zip)
       result[:destination] = params.require(:destination).permit(:country, :state, :city, :zip)
       return result
