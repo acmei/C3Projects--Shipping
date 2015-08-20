@@ -30,35 +30,42 @@ RSpec.describe FedAxApiWrapper do
           expect(@response.class).to eq Hash
         end
 
-        it "contains only the :status, :message, and :quotes keys" do
-          expect(@response.keys.sort).to eq [:message, :quotes, :status]
+        it "contains only the :status and :quotes keys" do
+          expect(@response.keys.sort).to eq [:quotes, :status]
         end
       end
     end
 
     describe "self.extract_data_from_response" do
       before :each do
-        VCR.use_cassette("ShippingApi_UPS") do
-          response = ShippingApi.ups_query(shipping_params)
-          @response = ShippingApi.extract_data_from_response(response)
+        VCR.use_cassette("ShippingApi_extraction") do
+          ups_response = ShippingApi.ups_query(shipping_params)
+          @ups_response = ShippingApi.extract_data_from_response(ups_response)
+          usps_response = ShippingApi.usps_query(shipping_params)
+          @usps_response = ShippingApi.extract_data_from_response(usps_response)
         end
       end
 
       it "returns an array of shipping cost esimates" do
-        expect(@response.class).to be Array
+        expect(@ups_response.class).to be Array
+        expect(@usps_response.class).to be Array
       end
 
       context "the estimates" do
-        it "contain only carrier, total_cost, service_type, & expected_delivery data" do
-          response = @response.first
-          expected_keys = ["carrier", "total_price", "service_type", "expected_delivery"]
-          optional_key = "expected_delivery"
+        let(:expected_keys) { ["carrier", "total_price", "service_type", "expected_delivery"] }
+        let(:optional_key) { "expected_delivery" }
+
+        it "contain only carrier, total_cost, service_type, & expected_delivery info" do
+          ups_response = @ups_response.first
+          usps_response = @usps_response.first
 
           expected_keys.each do |expected_key|
-            expect(response.keys).to include(expected_key) unless expected_key == optional_key
+            expect(ups_response.keys).to include(expected_key) unless expected_key == optional_key
+            expect(usps_response.keys).to include(expected_key) unless expected_key == optional_key
           end
 
-          expect(response.keys.count).to be <= expected_keys.count
+          expect(ups_response.keys.count).to be <= expected_keys.count
+          expect(usps_response.keys.count).to be <= expected_keys.count
         end
       end
     end

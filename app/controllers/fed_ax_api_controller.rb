@@ -42,7 +42,6 @@ class FedAxApiController < ApplicationController
 
         content = {}
         content[:receipt] = shipping_details
-        content[:message] = "yay log entry saved. successful shipment ftw." # FIXME: better message here
         content[:status] = 201
 
         status = :created
@@ -91,8 +90,11 @@ class FedAxApiController < ApplicationController
     end
 
     def shipping_selection(quotes, carrier, service_type)
-      selected_shipping_method = quotes.select do |quote|
-        quote["carrier"] == carrier && quote["service_type"] = service_type
+      carrier_key = carrier.downcase.to_sym
+      filtered_quotes = quotes[carrier_key]
+
+      selected_shipping_method = filtered_quotes.select do |quote|
+        (quote["carrier"] == carrier) && (quote["service_type"] == service_type)
       end
 
       selected_shipping_method.pop

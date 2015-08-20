@@ -37,31 +37,48 @@ shared_context "HTTP Ruby Hash response" do
 end
 
 shared_context "shipping quotes" do
-  it "contains an array of quotes" do
-    expect(@response["quotes"].class).to eq Array
-    # TODO: more?
+  it "contains a hash of quotes" do
+    expect(@response["quotes"].class).to eq Hash
   end
 
-  context "each quote in the quotes array" do
+  it "contains arrays of quotes inside carrier keys" do
+    expect(@response["quotes"]["ups"].class).to be Array
+    expect(@response["quotes"]["usps"].class).to be Array
+  end
+
+  context "the shipping quotes" do
     before :each do
-      @quotes = @response["quotes"]
+      @ups_quotes = @response["quotes"]["ups"]
+      @usps_quotes = @response["quotes"]["usps"]
     end
 
     it "contains the total cost of shipping" do
-      @quotes.each do |quote|
+      @ups_quotes.each do |quote|
+        expect(quote["total_price"]).to_not be_nil
+      end
+
+      @usps_quotes.each do |quote|
         expect(quote["total_price"]).to_not be_nil
       end
     end
 
     it "contains a description of the service type" do
-      @quotes.each do |quote|
+      @ups_quotes.each do |quote|
+        expect(quote["service_type"]).to_not be_nil
+      end
+
+      @usps_quotes.each do |quote|
         expect(quote["service_type"]).to_not be_nil
       end
     end
 
     it "has a carrier" do
-      @quotes.each do |quote|
+      @ups_quotes.each do |quote|
         expect(quote["carrier"]).to_not be_nil
+      end
+
+      @usps_quotes.each do |quote|
+        expect(quote["service_type"]).to_not be_nil
       end
     end
   end

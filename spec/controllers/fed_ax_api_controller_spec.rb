@@ -124,7 +124,7 @@ RSpec.describe FedAxApiController, type: :controller do
         end
 
         it "creates a new log entry in the DB" do
-          expect(ApiResponse.last.total_price).to eq 12852 # $128.52 -- what an expensive package!
+          expect(ApiResponse.last.total_price).to eq 4210 # $42.10 -- hmmm, not bad for 3-day shipping
         end
       end
 

@@ -1,16 +1,22 @@
 module FedAxApiWrapper
   class ShippingApi
     def self.query(delivery_info)
-      # delivery info is the packages, origin, and destination information passed
+      # delivery_info is the packages, origin, and destination information passed
       # into the API from the user -- in this case, bEtsy.
-      full_response = self.ups_query(delivery_info)
-      quotes = self.extract_data_from_response(full_response)
-      puts quotes.empty?
+      ups_response = self.ups_query(delivery_info)
+      ups_quotes = self.extract_data_from_response(ups_response)
 
-      if quotes.empty? # FIXME: better messages in json responses
-        response = { message: "not great! no content!", status: 204 } # FIXME: better message here
+      usps_response = self.ups_query(delivery_info)
+      usps_quotes = self.extract_data_from_response(usps_response)
+
+      quotes = {}
+      quotes[:ups] = ups_quotes
+      quotes[:usps] = usps_quotes
+
+      if quotes[:ups].empty? || quotes[:usps].empty?
+        response = { status: 204 } # FIXME: message here?
       else
-        response = { quotes: quotes, message: "great!", status: 200 } # FIXME: better message here
+        response = { quotes: quotes, status: 200 }
       end
     end
 
@@ -36,8 +42,8 @@ module FedAxApiWrapper
       return combined_results
     end
 
-    # unpacking & standardizing delivery specifications
-    def self.unpack_delivery_specs(delivery_specifications)
+    # standardizing delivery specifications by converting them to ActiveShipping objects
+    def self.standardize_delivery_specs(delivery_specifications)
       origin = ActiveShipping::Location.new(delivery_specifications[:origin])
       destination = ActiveShipping::Location.new(delivery_specifications[:destination])
       packages = delivery_specifications[:packages].map{ |package|
@@ -56,7 +62,7 @@ module FedAxApiWrapper
 
     # TODO: consider adding more handling for data types to the strong params in the controller.
     def self.ups_query(delivery_info) # FIXME: add doc comment to explain what's going on here.
-      origin, destination, packages = self.unpack_delivery_specs(delivery_info)
+      origin, destination, packages = self.standardize_delivery_specs(delivery_info)
       response = self.ups_carrier.find_rates(origin, destination, packages)
     end
 
@@ -67,6 +73,18 @@ module FedAxApiWrapper
         key: ENV["UPS_KEY"]
       }
       return ActiveShipping::UPS.new(ups_credentials)
+    end
+
+    def self.usps_query(delivery_info) # FIXME: add doc comment to explain what's going on here.
+      origin, destination, packages = self.standardize_delivery_specs(delivery_info)
+      response = self.usps_carrier.find_rates(origin, destination, packages)
+    end
+
+    def self.usps_carrier
+      usps_credentials = {
+        login: ENV["USPS_LOGIN"]
+      }
+      return ActiveShipping::USPS.new(usps_credentials)
     end
   end
 end
