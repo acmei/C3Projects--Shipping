@@ -5,8 +5,7 @@ class FedAxApiController < ApplicationController
 
   def quote
     begin
-      json_content = ShippingApi.query(shipping_quote_params)
-      content = JSON.parse json_content # convert to ruby # FIXME: consider moving this type conversion to the API wrapper
+      content = ShippingApi.query(shipping_quote_params)
 
       # OPTIMIZE: is this the best way to handle response status from the API Wrapper?
       if content["status"] == 200
@@ -18,10 +17,10 @@ class FedAxApiController < ApplicationController
 
     # this is not a hash rocket. it is doing some magic thing where it's assigning
     # the error object to a variable. now we can access the error object's message
-    rescue ActionController::ParameterMissing => error
+    rescue ActionController::ParameterMissing => error # this is raised by missing params
       content = { message: "#{ error.message.capitalize }" }
       status = :bad_request
-    rescue ActiveShipping::ResponseError => error
+    rescue ActiveShipping::ResponseError => error # this error is raised by bad address formats
       content = { message: "#{ error.message }" }
       status = :bad_request
     end
@@ -32,8 +31,7 @@ class FedAxApiController < ApplicationController
 
   def ship # FIXME: this method should accept & handle for extracting a single shipping method
     begin
-      json_content = ShippingApi.query(shipping_quote_params)
-      content = JSON.parse json_content # convert to ruby # FIXME: consider moving this type conversion to the API wrapper
+      content = ShippingApi.query(shipping_quote_params)
 
       # OPTIMIZE: is this the best way to handle response status from the API Wrapper?
       if content["status"] == 200
