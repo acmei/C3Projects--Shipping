@@ -20,9 +20,10 @@ module FedAxApiWrapper
       rates.each do |rate|
         result = {}
         result["carrier"] = rate.carrier # "UPS"
-        result["total_cost"] = rate.total_price / 100.0 # price in cents
+        result["total_cost"] = rate.total_price # price in cents
         result["service_type"] = rate.service_name # "UPS Ground"
         result["expected_delivery"] = rate.delivery_date # nil or timedate
+        # result["tracking_number"] = ???? if ????
 
         combined_results.push(result)
       end
