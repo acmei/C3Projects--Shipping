@@ -11,11 +11,16 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150818233250) do
+ActiveRecord::Schema.define(version: 20150820013729) do
 
   create_table "api_responses", force: :cascade do |t|
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at",        null: false
+    t.datetime "updated_at",        null: false
+    t.string   "carrier",           null: false
+    t.integer  "total_price",       null: false
+    t.string   "service_type",      null: false
+    t.datetime "expected_delivery"
+    t.string   "tracking_number"
   end
 
   create_table "destinations", force: :cascade do |t|
