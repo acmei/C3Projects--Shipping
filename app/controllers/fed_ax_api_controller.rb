@@ -19,10 +19,10 @@ class FedAxApiController < ApplicationController
     # this is not a hash rocket. it is doing some magic thing where it's assigning
     # the error object to a variable. now we can access the error object's message
     rescue ActionController::ParameterMissing => error
-      content = { message: "#{ error.message.capitalize }", error: error }
+      content = { message: "#{ error.message.capitalize }" }
       status = :bad_request
     rescue ActiveShipping::ResponseError => error
-      content = { message: "#{ error.message }", error: error }
+      content = { message: "#{ error.message }" }
       status = :bad_request
     end
 
