@@ -20,8 +20,10 @@ class FedAxApiController < ApplicationController
         render json: quotes, status: :no_content
       end
 
-    rescue ActionController::ParameterMissing
-      render json: { message: "error BAD PARAMS YO" }, status: :bad_request # FIXME: I need a better error message
+    rescue ActionController::ParameterMissing => e
+      render json: { message: "#{ e.message.capitalize }" }, status: :bad_request
+    rescue ActiveShipping::ResponseError => e
+      render json: { message: "#{ e.message }" }, status: :bad_request
     end
   end
 
