@@ -22,10 +22,7 @@ RSpec.describe FedAxApiController, type: :controller do
     context "valid inputs" do
       before :each do
         VCR.use_cassette("ShippingAPI_valid") do
-          get :quote, {
-            header: { "Content-Type": "application/json" },
-            body: { packages: valid_packages, origin: valid_origin, destination: valid_destination }.to_json
-          }
+          get :quote, packages: valid_packages, origin: valid_origin, destination: valid_destination
         end
       end
 

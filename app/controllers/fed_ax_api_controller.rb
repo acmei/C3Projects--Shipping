@@ -22,7 +22,7 @@ class FedAxApiController < ApplicationController
       content = { message: "#{ error.message.capitalize }" }
       status = :bad_request
     rescue ActiveShipping::ResponseError => error
-      content = { message: "#{ error.message }" }
+      content = { message: "#{ error.message }", error: error }
       status = :bad_request
     end
 
