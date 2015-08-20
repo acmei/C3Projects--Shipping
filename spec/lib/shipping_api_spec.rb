@@ -18,24 +18,6 @@ RSpec.describe FedAxApiWrapper do
   }
 
   describe "class methods" do
-    describe "self.query" do
-      context "with valid parameters" do
-        before :each do
-          VCR.use_cassette("ShippingApi_valid") do
-            @response = ShippingApi.query(shipping_params)
-          end
-        end
-
-        it "returns a hash object" do
-          expect(@response.class).to eq Hash
-        end
-
-        it "contains only the :status and :quotes keys" do
-          expect(@response.keys.sort).to eq [:quotes, :status]
-        end
-      end
-    end
-
     describe "self.extract_data_from_response" do
       before :each do
         VCR.use_cassette("ShippingApi_extraction") do
