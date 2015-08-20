@@ -6,7 +6,7 @@ module FedAxApiWrapper
       ups_response = self.ups_query(delivery_info)
       ups_quotes = self.extract_data_from_response(ups_response)
 
-      usps_response = self.ups_query(delivery_info)
+      usps_response = self.usps_query(delivery_info)
       usps_quotes = self.extract_data_from_response(usps_response)
 
       quotes = {}
