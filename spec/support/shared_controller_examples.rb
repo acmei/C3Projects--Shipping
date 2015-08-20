@@ -6,6 +6,12 @@ shared_context "HTTP 200 success" do
   end
 end
 
+shared_context "HTTP 201 success" do
+  it "responds with a 201-created status code" do
+    expect(response).to have_http_status 201
+  end
+end
+
 shared_context "HTTP 204 success" do
   it 'responds with a 204-no content status code' do
     expect(response.status).to eq 204
@@ -37,7 +43,7 @@ shared_context "shipping quotes" do
 
     it "contains the total cost of shipping" do
       @quotes.each do |quote|
-        expect(quote["total_cost"]).to_not be_nil
+        expect(quote["total_price"]).to_not be_nil
       end
     end
 
@@ -87,26 +93,6 @@ shared_context "shipping query with bad address" do
 
     it "sends a helpful error message" do
       expect(@response["message"]).to include("Failure:")
-    end
-
-    it "does not include quotes" do
-      expect(@response["quotes"]).to be_nil
-    end
-  end
-end
-
-shared_context "shipping query with bad client id" do
-  it "responds with a bad request status" do
-    expect(response).to have_http_status 400
-  end
-
-  context "the returned json object" do
-    before :each do
-      @response = JSON.parse response.body
-    end
-
-    it "sends a helpful error message" do
-      expect(@response["message"]).to include("error")
     end
 
     it "does not include quotes" do

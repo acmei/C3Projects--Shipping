@@ -49,7 +49,7 @@ RSpec.describe FedAxApiWrapper do
       context "the estimates" do
         it "contain only carrier, total_cost, service_type, & expected_delivery data" do
           response = @response.first
-          expected_keys = ["carrier", "total_cost", "service_type", "expected_delivery"]
+          expected_keys = ["carrier", "total_price", "service_type", "expected_delivery"]
           optional_key = "expected_delivery"
 
           expected_keys.each do |expected_key|

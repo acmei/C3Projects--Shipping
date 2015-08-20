@@ -5,11 +5,11 @@ module FedAxApiWrapper
       full_response = self.ups_query(delivery_info)
       quotes.push self.extract_data_from_response(full_response)
 
-      if quotes.empty?
-        response = { message: "not great! no content!", status: 204}.to_json
+      if quotes.empty? # FIXME: better messages in json responses
+        response = { message: "not great! no content!", status: 204}.to_json # FIXME: better message here
       else
         quotes.flatten!
-        response = { quotes: quotes, message: "great!", status: 200 }.to_json
+        response = { quotes: quotes, message: "great!", status: 200 }.to_json # FIXME: better message here
       end
     end
 
@@ -19,8 +19,9 @@ module FedAxApiWrapper
 
       rates.each do |rate|
         result = {}
+
         result["carrier"] = rate.carrier # "UPS"
-        result["total_cost"] = rate.total_price # price in cents
+        result["total_price"] = rate.total_price # price in cents
         result["service_type"] = rate.service_name # "UPS Ground"
         result["expected_delivery"] = rate.delivery_date # nil or timedate
         # result["tracking_number"] = ???? if ????
