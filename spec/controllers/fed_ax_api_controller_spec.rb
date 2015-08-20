@@ -71,26 +71,12 @@ RSpec.describe FedAxApiController, type: :controller do
 
       context "missing client key DO WE WANT bEtsy TO HAVE A CLIENT KEY / ID???" do
         before :each do
-          get :quote, packages: valid_packages, origin: valid_origin, destination: valid_destination
-        end
-
-        it "responds with a bad request status" do
-          expect(response).to have_http_status 400
-        end
-
-        context "the returned json object" do
-          before :each do
-            @response = JSON.parse response.body
-          end
-
-          it "sends a helpful error message" do
-            expect(@response["message"]).to include("error")
-          end
-
-          it "does not include quotes" do
-            expect(@response["quotes"]).to be_nil
+          VCR.use_cassette("FedAx_bad_client_id") do
+            get :quote, packages: valid_packages, origin: valid_origin, destination: valid_destination
           end
         end
+
+        it_behaves_like "shipping query with bad client id"
       end
     end
   end
@@ -110,7 +96,7 @@ RSpec.describe FedAxApiController, type: :controller do
       it_behaves_like "HTTP JSON response"
 
       context "the log entry" do
-        it "???"
+        it "OHMIGOSH I THINK I MIGHT BE READY TO CREATE THE LOG TABLES!!!!!???"
       end
 
       context "the returned json object" do
@@ -159,26 +145,12 @@ RSpec.describe FedAxApiController, type: :controller do
 
       context "missing client key DO WE WANT bEtsy TO HAVE A CLIENT KEY / ID???" do
         before :each do
-          post :ship, packages: valid_packages, origin: valid_origin, destination: valid_destination
-        end
-
-        it "responds with a bad request status" do
-          expect(response).to have_http_status 400
-        end
-
-        context "the returned json object" do
-          before :each do
-            @response = JSON.parse response.body
-          end
-
-          it "sends a helpful error message" do
-            expect(@response["message"]).to include("error")
-          end
-
-          it "does not include quotes" do
-            expect(@response["quotes"]).to be_nil
+          VCR.use_cassette("FedAx_bad_client_id") do
+            post :ship, packages: valid_packages, origin: valid_origin, destination: valid_destination
           end
         end
+
+        it_behaves_like "shipping query with bad client id"
       end
     end
   end

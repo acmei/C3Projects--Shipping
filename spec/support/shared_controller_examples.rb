@@ -94,3 +94,23 @@ shared_context "shipping query with bad address" do
     end
   end
 end
+
+shared_context "shipping query with bad client id" do
+  it "responds with a bad request status" do
+    expect(response).to have_http_status 400
+  end
+
+  context "the returned json object" do
+    before :each do
+      @response = JSON.parse response.body
+    end
+
+    it "sends a helpful error message" do
+      expect(@response["message"]).to include("error")
+    end
+
+    it "does not include quotes" do
+      expect(@response["quotes"]).to be_nil
+    end
+  end
+end

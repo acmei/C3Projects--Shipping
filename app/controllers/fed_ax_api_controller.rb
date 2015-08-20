@@ -6,35 +6,63 @@ class FedAxApiController < ApplicationController
   def quote
     begin
       # code to take in params for making a shipping quote here
-      json_quotes = ShippingApi.query(shipping_params)
+      json_content = ShippingApi.query(shipping_params)
 
       # convert to ruby
-      quotes = JSON.parse json_quotes
+      content = JSON.parse json_content
 
       # should return successful with quote content if APIs respond with quotes
-      if quotes["status"] == 200 # OPTIMIZE: is this the best way to handle response status from the API Wrapper?
-        render json: quotes, status: :ok
-
+      if content["status"] == 200 # OPTIMIZE: is this the best way to handle response status from the API Wrapper?
+        status = :ok
       # should return successful with no quote content if APIs queried do not ship to or from said location
-      else quotes["status"] == 204 # OPTIMIZE: is this the best way to handle response status from the API Wrapper?
-        render json: quotes, status: :no_content
+      else content["status"] == 204 # OPTIMIZE: is this the best way to handle response status from the API Wrapper?
+        status = :no_content
       end
+
 
     # this is not a hash rocket. it is doing some magic thing where it's assigning the error object to a variable.
     rescue ActionController::ParameterMissing => e
       # now we can access the error object's message! n_n
-      render json: { message: "#{ e.message.capitalize }" }, status: :bad_request
+      content = { message: "#{ e.message.capitalize }" }
+      status = :bad_request
     rescue ActiveShipping::ResponseError => e
-      render json: { message: "#{ e.message }" }, status: :bad_request
+      content = { message: "#{ e.message }" }
+      status = :bad_request
     end
+
+    render json: content, status: status
   end
 
-  def ship
-    # code to ship something
-    # aka code to save something to the log
-    # should return successful if the log entry saves correctly
-    # should return not successful if there is a problem with processing
-    render json: {}, status: :ok
+  def ship # FIXME: this method should accept & handle for extracting a single shipping method
+    begin
+      # code to take in params for making a shipping quote here
+      json_content = ShippingApi.query(shipping_params)
+
+      # convert to ruby
+      content = JSON.parse json_content
+
+      # should return successful with quote content if APIs respond with quotes
+      if content["status"] == 200 # OPTIMIZE: is this the best way to handle response status from the API Wrapper?
+        # TODO: code to ship something
+        # aka code to save something to the log
+        status = :created
+      # should return successful with no quote content if APIs queried do not ship to or from said location
+      else content["status"] == 204 # OPTIMIZE: is this the best way to handle response status from the API Wrapper?
+        status = :no_content
+      end
+
+
+    # this is not a hash rocket. it is doing some magic thing where it's assigning the error object to a variable.
+    rescue ActionController::ParameterMissing => e
+      # now we can access the error object's message! n_n
+      content = { message: "#{ e.message.capitalize }" }
+      status = :bad_request
+    rescue ActiveShipping::ResponseError => e
+      content = { message: "#{ e.message }" }
+      status = :bad_request
+    end
+
+    render json: content, status: status
   end
 
   private
