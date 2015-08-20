@@ -77,9 +77,9 @@ class FedAxApiController < ApplicationController
       # Short version:
       #   Strong Parameters doesn't handle arrays of nested objects very well:
       #   NoMethodError: undefined method `permit' for #<Array:0x007f894dd8c830>
-      result[:packages] = params.permit(:packages => [:weight, :width, :height, :depth])[:packages]
-      result[:origin] = params.permit(:origin).permit(:country, :state, :city, :zip)[:origin]
-      result[:destination] = params.permit(:destination).permit(:country, :state, :city, :zip)[:destination]
+      result[:packages] = params.permit("packages" => ["weight", "width", "height", "depth"])["packages"]
+      result[:origin] = params.require("origin").permit("country", "state", "city", "zip")
+      result[:destination] = params.require("destination").permit("country", "state", "city", "zip")
       # TODO: add rails logger object to try to figure out why this is hanging
       return result
     end
