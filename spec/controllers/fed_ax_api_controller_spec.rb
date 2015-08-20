@@ -29,7 +29,7 @@ RSpec.describe FedAxApiController, type: :controller do
       it_behaves_like "HTTP 200 success"
       it_behaves_like "HTTP JSON response"
 
-      context "the returned json object" do
+      context "the returned hash object" do
         before :each do
           @response = JSON.parse response.body
         end

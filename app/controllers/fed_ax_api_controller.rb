@@ -8,9 +8,9 @@ class FedAxApiController < ApplicationController
       content = ShippingApi.query(shipping_quote_params)
 
       # OPTIMIZE: is this the best way to handle response status from the API Wrapper?
-      if content["status"] == 200
+      if content[:status] == 200
         status = :ok
-      else content["status"] == 204
+      else content[:status] == 204
         status = :no_content
       end
 
@@ -34,9 +34,9 @@ class FedAxApiController < ApplicationController
       content = ShippingApi.query(shipping_quote_params)
 
       # OPTIMIZE: is this the best way to handle response status from the API Wrapper?
-      if content["status"] == 200
+      if content[:status] == 200
         carrier, service_type = shipping_choice_params
-        shipping_details = shipping_selection(content["quotes"], carrier, service_type)
+        shipping_details = shipping_selection(content[:quotes], carrier, service_type)
         log_entry = ApiResponse.create(shipping_details)
         log_entry.log!(shipping_quote_params)
 
@@ -46,18 +46,18 @@ class FedAxApiController < ApplicationController
         content[:status] = 201
 
         status = :created
-      else content["status"] == 204
+      else content[:status] == 204
         status = :no_content
       end
 
 
     # this is not a hash rocket. it is doing some magic thing where it's assigning
     # the error object to a variable. now we can access the error object's message
-    rescue ActionController::ParameterMissing => e
-      content = { message: "#{ e.message.capitalize }" }
+    rescue ActionController::ParameterMissing => error
+      content = { message: "#{ error.message.capitalize }" }
       status = :bad_request
-    rescue ActiveShipping::ResponseError => e
-      content = { message: "#{ e.message }" }
+    rescue ActiveShipping::ResponseError => error
+      content = { message: "#{ error.message }" }
       status = :bad_request
     end
 
@@ -67,18 +67,19 @@ class FedAxApiController < ApplicationController
   private
     def shipping_quote_params
       result = {}
+
+      result[:packages] = params.permit("packages" => ["weight", "width", "height", "depth"])["packages"]
+      result[:origin] = params.require("origin").permit("country", "state", "city", "zip")
+      result[:destination] = params.require("destination").permit("country", "state", "city", "zip")
       # Long version:
-      #   Changing the next line of code to use params.require(:packages => [])
+      #   Changing the packages code to use params.require(:packages => [])
       #   or params.require(:packages) returns the array, which Strong
       #   Parameters no longer recognizes as a params object -- so attempting
       #   to permit the nested objects' attributes won't work.
       # Short version:
       #   Strong Parameters doesn't handle arrays of nested objects very well:
       #   NoMethodError: undefined method `permit' for #<Array:0x007f894dd8c830>
-      result[:packages] = params.permit("packages" => ["weight", "width", "height", "depth"])["packages"]
-      result[:origin] = params.require("origin").permit("country", "state", "city", "zip")
-      result[:destination] = params.require("destination").permit("country", "state", "city", "zip")
-      # TODO: add rails logger object to try to figure out why this is hanging
+
       return result
     end
 

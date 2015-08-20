@@ -2,7 +2,6 @@ require "rails_helper"
 require "#{ Rails.root }/lib/shipping_api.rb"
 include FedAxApiWrapper
 
-
 RSpec.describe FedAxApiWrapper do
   let(:valid_package) { { weight: "1.5", height: "1.5", width: "1.5", depth: "1.5" } }
   let(:another_valid_package) { { weight: "2.5", height: "2.5", width: "2.5", depth: "2.5" } }
@@ -27,9 +26,12 @@ RSpec.describe FedAxApiWrapper do
           end
         end
 
-        it "returns a json object" do
-          expect(@response.class).to eq String
-          expect(JSON.parse(@response).class).to eq Hash
+        it "returns a hash object" do
+          expect(@response.class).to eq Hash
+        end
+
+        it "contains only the :status, :message, and :quotes keys" do
+          expect(@response.keys.sort).to eq [:message, :quotes, :status]
         end
       end
     end

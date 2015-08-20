@@ -5,6 +5,7 @@ module FedAxApiWrapper
       # into the API from the user -- in this case, bEtsy.
       full_response = self.ups_query(delivery_info)
       quotes = self.extract_data_from_response(full_response)
+      puts quotes.empty?
 
       if quotes.empty? # FIXME: better messages in json responses
         response = { message: "not great! no content!", status: 204 } # FIXME: better message here
@@ -15,11 +16,14 @@ module FedAxApiWrapper
 
     def self.extract_data_from_response(response)
       combined_results = []
-      rates = response.rates # this is made available to us by the ActiveShipping gem
+
+      # this is made available to us by the ActiveShipping gem.
+      rates = response.rates
 
       rates.each do |rate|
         result = {}
 
+        # these methods are also made available to us by the ActiveShipping gem.
         result["carrier"] = rate.carrier # "UPS"
         result["total_price"] = rate.total_price # price in cents
         result["service_type"] = rate.service_name # "UPS Ground"
@@ -62,7 +66,7 @@ module FedAxApiWrapper
         password: ENV["UPS_PASSWORD"],
         key: ENV["UPS_KEY"]
       }
-      ActiveShipping::UPS.new(ups_credentials)
+      return ActiveShipping::UPS.new(ups_credentials)
     end
   end
 end

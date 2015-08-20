@@ -30,6 +30,12 @@ shared_context "HTTP JSON response" do
   end
 end
 
+shared_context "HTTP Ruby Hash response" do
+  it "returns a ruby hash object" do
+    expect(response.class).to eq Hash
+  end
+end
+
 shared_context "shipping quotes" do
   it "contains an array of quotes" do
     expect(@response["quotes"].class).to eq Array
