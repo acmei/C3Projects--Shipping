@@ -20,7 +20,9 @@ class FedAxApiController < ApplicationController
         render json: quotes, status: :no_content
       end
 
+    # this is not a hash rocket. it is doing some magic thing where it's assigning the error object to a variable.
     rescue ActionController::ParameterMissing => e
+      # now we can access the error object's message! n_n
       render json: { message: "#{ e.message.capitalize }" }, status: :bad_request
     rescue ActiveShipping::ResponseError => e
       render json: { message: "#{ e.message }" }, status: :bad_request
