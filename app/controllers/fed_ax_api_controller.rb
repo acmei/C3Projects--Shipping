@@ -122,6 +122,6 @@ class FedAxApiController < ApplicationController
         (quote["carrier"] == carrier) && (quote["service_type"] == service_type)
       end
 
-      selected_shipping_method.pop
+      selected_shipping_method.first
     end
 end
