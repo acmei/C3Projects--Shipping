@@ -5,7 +5,7 @@ class ApiResponse < ActiveRecord::Base
   has_many :packages
 
   # Validations ----------------------------------------------------------------
-  CARRIER_REGEX = /\A(UPS)\z/ # FIXME: currently, we only support UPS queries
+  CARRIER_REGEX = /\A(UPS)|(USPS)\z/
   validates :carrier, :total_price, :service_type, presence: true
   validates_format_of :carrier, with: CARRIER_REGEX
 

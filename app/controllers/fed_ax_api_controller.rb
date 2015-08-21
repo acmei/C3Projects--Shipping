@@ -22,6 +22,7 @@ class FedAxApiController < ApplicationController
         content = {}
         content[:quote] = shipping_details
         content[:status] = 200
+
         status = :ok
       end
 
