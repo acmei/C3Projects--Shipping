@@ -113,30 +113,6 @@ RSpec.describe FedAxApiController, type: :controller do
           it_behaves_like "shipping query with bad address"
         end
       end
-
-      context "missing client key DO WE WANT bEtsy TO HAVE A CLIENT KEY / ID???" do
-        before :each do
-          VCR.use_cassette("FedAx_bad_client_id") do
-            get :quote, packages: valid_packages, origin: valid_origin, destination: valid_destination
-          end
-        end
-
-        it_behaves_like "HTTP 400 client error"
-
-        context "the returned json object" do
-          before :each do
-            @response = JSON.parse response.body
-          end
-
-          it "sends a helpful error message" do
-            expect(@response["message"]).to include("error")
-          end
-
-          it "does not include quotes" do
-            expect(@response["quotes"]).to be_nil
-          end
-        end
-      end
     end
   end
 
@@ -230,30 +206,6 @@ RSpec.describe FedAxApiController, type: :controller do
           end
 
           it_behaves_like "shipping query with bad address"
-        end
-      end
-
-      context "missing client key DO WE WANT bEtsy TO HAVE A CLIENT KEY / ID???" do
-        before :each do
-          VCR.use_cassette("FedAx_bad_client_id") do
-            post :ship, packages: valid_packages, origin: valid_origin, destination: valid_destination, shipping: shipping_choice_params
-          end
-        end
-
-        it_behaves_like "HTTP 400 client error"
-
-        context "the returned json object" do
-          before :each do
-            @response = JSON.parse response.body
-          end
-
-          it "sends a helpful error message" do
-            expect(@response["message"]).to include("error")
-          end
-
-          it "does not include receipt" do
-            expect(@response["receipt"]).to be_nil
-          end
         end
       end
     end
