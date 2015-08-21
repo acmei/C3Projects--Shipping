@@ -22,7 +22,7 @@ module FedAxApiWrapper
       quotes[:usps] = usps_quotes
 
       if quotes[:ups].empty? || quotes[:usps].empty?
-        response = { status: 204 } # FIXME: message here?
+        response = { status: 204 }
       else
         response = { quotes: quotes, status: 200 }
       end
@@ -42,7 +42,6 @@ module FedAxApiWrapper
         result["total_price"] = rate.total_price # price in cents
         result["service_type"] = rate.service_name # "UPS Ground"
         result["expected_delivery"] = rate.delivery_date # nil or timedate
-        # result["tracking_number"] = ???? if ????
 
         combined_results.push(result)
       end
@@ -53,7 +52,7 @@ module FedAxApiWrapper
     def self.extract_data_from_usps_response(response)
       combined_results = []
 
-      # this is made available to us by the ActiveShipping gem.
+      # this method is made available to us by the ActiveShipping gem.
       rates = response.rates
 
       rates.each do |rate|
@@ -65,7 +64,6 @@ module FedAxApiWrapper
           result["total_price"] = rate.total_price # price in cents
           result["service_type"] = rate.service_name # "USPS Standard Post"
           result["expected_delivery"] = rate.delivery_date # nil or timedate
-          # result["tracking_number"] = ???? if ????
 
           combined_results.push(result)
         end
@@ -92,12 +90,15 @@ module FedAxApiWrapper
       return origin, destination, packages
     end
 
-    # TODO: consider adding more handling for data types to the strong params in the controller.
-    def self.ups_query(delivery_info) # FIXME: add doc comment to explain what's going on here.
+    # this method makes the actual API call via the ActiveShipping UPS object created in self.ups_carrier
+    def self.ups_query(delivery_info)
+      # first, let's get our data into a form that ActiveShipping likes
       origin, destination, packages = self.standardize_delivery_specs(delivery_info)
+      # now let's make query & return the response
       response = self.ups_carrier.find_rates(origin, destination, packages)
     end
 
+    # this method plugs our UPS credentials into an ActiveShipping UPS object
     def self.ups_carrier
       ups_credentials = {
         login: ENV["UPS_LOGIN"],
@@ -107,11 +108,15 @@ module FedAxApiWrapper
       return ActiveShipping::UPS.new(ups_credentials)
     end
 
-    def self.usps_query(delivery_info) # FIXME: add doc comment to explain what's going on here.
+    # this method makes the actual API call via the ActiveShipping USPS object created in self.usps_carrier
+    def self.usps_query(delivery_info)
+      # first, let's get our data into a form that ActiveShipping likes
       origin, destination, packages = self.standardize_delivery_specs(delivery_info)
+      # now let's make query & return the response
       response = self.usps_carrier.find_rates(origin, destination, packages)
     end
 
+    # this method plugs our USPS credentials into an ActiveShipping USPS object
     def self.usps_carrier
       usps_credentials = {
         login: ENV["USPS_LOGIN"]

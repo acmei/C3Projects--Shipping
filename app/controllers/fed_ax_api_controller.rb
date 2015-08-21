@@ -40,7 +40,7 @@ class FedAxApiController < ApplicationController
   end
 
 
-  def ship # FIXME: this method should accept & handle for extracting a single shipping method
+  def ship
     begin
       content = ShippingApi.query(shipping_quote_params)
 

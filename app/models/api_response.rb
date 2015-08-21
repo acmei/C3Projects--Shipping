@@ -10,7 +10,7 @@ class ApiResponse < ActiveRecord::Base
   validates_format_of :carrier, with: CARRIER_REGEX
 
   # Instance Methods -----------------------------------------------------------
-  def log!(shipping_details) # OPTIMIZE: DRY this up with accept_nested_attributes_for
+  def log!(shipping_details) # OPTIMIZE: DRY this up with accept_nested_attributes_for?
     origin = shipping_details[:origin]
     destination = shipping_details[:destination]
     packages = shipping_details[:packages]
