@@ -1,3 +1,39 @@
+code | name
+-----|-----
+0 | USPS First-Class Mail Stamped Letter
+0 | USPS First-Class Mail Parcel
+1 | USPS Priority Mail 2-Day
+2 | USPS Priority Mail Express 2-Day Hold For Pickup
+3 | USPS Priority Mail Express 2-Day
+4 | USPS Standard Post
+6 | USPS Media Mail Parcel
+7 | USPS Library Mail Parcel
+13 | USPS Priority Mail Express 2-Day Flat Rate Envelope
+16 | USPS Priority Mail 2-Day Flat Rate Envelope
+17 | USPS Priority Mail 2-Day Medium Flat Rate Box
+27 | USPS Priority Mail Express 2-Day Flat Rate Envelope Hold For Pickup
+29 | USPS Priority Mail 2-Day Padded Flat Rate Envelope
+30 | USPS Priority Mail Express 2-Day Legal Flat Rate Envelope
+31 | USPS Priority Mail Express 2-Day Legal Flat Rate Envelope Hold For Pickup
+38 | USPS Priority Mail 2-Day Gift Card Flat Rate Envelope
+40 | USPS Priority Mail 2-Day Window Flat Rate Envelope
+42 | USPS Priority Mail 2-Day Small Flat Rate Envelope
+44 | USPS Priority Mail 2-Day Legal Flat Rate Envelope
+55 | USPS Priority Mail Express 2-Day Flat Rate Boxes
+56 | USPS Priority Mail Express 2-Day Flat Rate Boxes Hold For Pickup
+62 | USPS Priority Mail Express 2-Day Padded Flat Rate Envelope
+63 | USPS Priority Mail Express 2-Day Padded Flat Rate Envelope Hold For Pickup
+78 | USPS First-Class Mail Metered Letter
+---|--- we want ---
+0 | USPS First-Class Mail Parcel
+4 | USPS Standard Post
+17 | USPS Priority Mail 2-Day Medium Flat Rate Box
+22 | USPS Priority Mail 2-Day Large Flat Rate Box
+55 | USPS Priority Mail Express 2-Day Flat Rate Boxes
+56 | USPS Priority Mail Express 2-Day Flat Rate Boxes Hold For Pickup
+
+> ## original response from API
+
 - @rates=
  [- #<ActiveShipping::RateEstimate:0x007fa242448fe0
    - @carrier="USPS",
