@@ -18,13 +18,13 @@ RSpec.describe FedAxApiWrapper do
   }
 
   describe "class methods" do
-    describe "self.extract_data_from_response" do
+    describe "extracting data from responses" do
       before :each do
         VCR.use_cassette("ShippingApi_extraction") do
           ups_response = ShippingApi.ups_query(shipping_params)
-          @ups_response = ShippingApi.extract_data_from_response(ups_response)
+          @ups_response = ShippingApi.extract_data_from_ups_response(ups_response)
           usps_response = ShippingApi.usps_query(shipping_params)
-          @usps_response = ShippingApi.extract_data_from_response(usps_response)
+          @usps_response = ShippingApi.extract_data_from_usps_response(usps_response)
         end
       end
 

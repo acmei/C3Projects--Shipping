@@ -1,13 +1,22 @@
 module FedAxApiWrapper
   class ShippingApi
+    DESIRED_USPS_SERVICES = [
+      "USPS First-Class Mail Parcel",
+      "USPS Standard Post",
+      "USPS Priority Mail 2-Day Medium Flat Rate Box",
+      "USPS Priority Mail 2-Day Large Flat Rate Box",
+      "USPS Priority Mail Express 2-Day Flat Rate Boxes",
+      "USPS Priority Mail Express 2-Day Flat Rate Boxes Hold For Pickup"
+    ]
+
     def self.query(delivery_info)
       # delivery_info is the packages, origin, and destination information passed
       # into the API from the user -- in this case, bEtsy.
       ups_response = self.ups_query(delivery_info)
-      ups_quotes = self.extract_data_from_response(ups_response)
+      ups_quotes = self.extract_data_from_ups_response(ups_response)
 
       usps_response = self.usps_query(delivery_info)
-      usps_quotes = self.extract_data_from_response(usps_response)
+      usps_quotes = self.extract_data_from_usps_response(usps_response)
 
       quotes = {}
       quotes[:ups] = ups_quotes
@@ -20,7 +29,7 @@ module FedAxApiWrapper
       end
     end
 
-    def self.extract_data_from_response(response)
+    def self.extract_data_from_ups_response(response)
       combined_results = []
 
       # this is made available to us by the ActiveShipping gem.
@@ -37,6 +46,30 @@ module FedAxApiWrapper
         # result["tracking_number"] = ???? if ????
 
         combined_results.push(result)
+      end
+
+      return combined_results
+    end
+
+    def self.extract_data_from_usps_response(response)
+      combined_results = []
+
+      # this is made available to us by the ActiveShipping gem.
+      rates = response.rates
+
+      rates.each do |rate|
+        if DESIRED_USPS_SERVICES.include? rate.service_name
+          result = {}
+
+          # these methods are also made available to us by the ActiveShipping gem.
+          result["carrier"] = rate.carrier # "USPS"
+          result["total_price"] = rate.total_price # price in cents
+          result["service_type"] = rate.service_name # "USPS Standard Post"
+          result["expected_delivery"] = rate.delivery_date # nil or timedate
+          # result["tracking_number"] = ???? if ????
+
+          combined_results.push(result)
+        end
       end
 
       return combined_results
