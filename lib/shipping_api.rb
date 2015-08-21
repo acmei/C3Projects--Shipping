@@ -5,8 +5,7 @@ module FedAxApiWrapper
       "USPS Standard Post",
       "USPS Priority Mail 2-Day Medium Flat Rate Box",
       "USPS Priority Mail 2-Day Large Flat Rate Box",
-      "USPS Priority Mail Express 2-Day Flat Rate Boxes",
-      "USPS Priority Mail Express 2-Day Flat Rate Boxes Hold For Pickup"
+      "USPS Priority Mail Express 2-Day Flat Rate Boxes"
     ]
 
     def self.query(delivery_info)

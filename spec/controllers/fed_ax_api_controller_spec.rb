@@ -11,7 +11,7 @@ RSpec.describe FedAxApiController, type: :controller do
   let(:shipping_choice_params) { { carrier: "UPS", service_type: "UPS Three-Day Select" } }
 
   # package these things in json
-  let(:json_body) { { origin: valid_origin, desination: valid_destination, packages: valid_packages }.to_json }
+  let(:json_body) { { origin: valid_origin, destination: valid_destination, packages: valid_packages }.to_json }
 
   # setting up some variables that should break stuff
   let(:invalid_package) { [{ weight: "apples", height: "bananas", width: "avocados", depth: "pineco" }] }
