@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>FedAx API</title>
+    <%= favicon_link_tag %>
+  </head>
+  <body>
+    <h1 align="center">Last item shipped with FedAxAPI:</h1>
+    <h3 align="center">
+      Service Type<br />
+      <small><%= @last_shipped.service_type %></small>
+    </h3>
+    <h3 align="center">
+      Destination<br />
+      <small><%= @last_shipped.destination.city %>, <%= @last_shipped.destination.state %></small>
+    </h3>
+  </body>
+</html>

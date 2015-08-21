@@ -17,7 +17,12 @@ class FedAxApiController < ApplicationController
       # handling for receiving just the shipping quote for a given service type
       if params[:shipping]
         carrier, service_type = shipping_choice_params
-        content = shipping_selection(content[:quotes], carrier, service_type)
+        shipping_details = shipping_selection(content[:quotes], carrier, service_type)
+
+        content = {}
+        content[:quote] = shipping_details
+        content[:status] = 200
+        status = :ok
       end
 
     # this is not a hash rocket. it is doing some magic thing where it's assigning
@@ -66,6 +71,11 @@ class FedAxApiController < ApplicationController
     end
 
     render json: content, status: status
+  end
+
+  def root
+    @last_shipped = ApiResponse.last
+    render :root, layout: false
   end
 
   private

@@ -10,9 +10,6 @@ RSpec.describe FedAxApiController, type: :controller do
   let(:valid_destination) { { country: "US", state: "IL", city: "Chicago", zip: "60652" } }
   let(:shipping_choice_params) { { carrier: "UPS", service_type: "UPS Three-Day Select" } }
 
-  # package these things in json
-  let(:json_body) { { origin: valid_origin, destination: valid_destination, packages: valid_packages }.to_json }
-
   # setting up some variables that should break stuff
   let(:invalid_package) { [{ weight: "apples", height: "bananas", width: "avocados", depth: "pineco" }] }
   let(:invalid_origin) { { country: "US", state: "WA", city: "Houston", zip: "60652" } }
@@ -40,6 +37,50 @@ RSpec.describe FedAxApiController, type: :controller do
 
         it_behaves_like "shipping quotes"
       end
+    end
+
+    context "valid inputs with optional single service type parameter" do
+      before :each do
+        VCR.use_cassette("ShippingAPI_valid") do
+          get :quote, packages: valid_packages, origin: valid_origin, destination: valid_destination, shipping: shipping_choice_params
+        end
+      end
+
+      it_behaves_like "HTTP 200 success"
+      it_behaves_like "HTTP JSON response"
+
+      context "the returned json object" do
+        before :each do
+          @response = JSON.parse response.body
+        end
+
+        it "contains a successful status code" do
+          expect(@response["status"]).to eq 200
+        end
+
+        it "contains a quote hash" do
+          expect(@response["quote"].class).to eq Hash
+        end
+
+        context "the quote object" do
+          before :each do
+            @quote = @response["quote"]
+          end
+
+          it "contains the total price of shipping" do
+            expect(@quote["total_price"]).to_not be_nil
+          end
+
+          it "contains a description of the service type" do
+            expect(@quote["service_type"]).to_not be_nil
+          end
+
+          it "has a carrier" do
+            expect(@quote["carrier"]).to_not be_nil
+          end
+        end
+      end
+
     end
 
     context "invalid inputs" do
@@ -214,6 +255,33 @@ RSpec.describe FedAxApiController, type: :controller do
             expect(@response["receipt"]).to be_nil
           end
         end
+      end
+    end
+  end
+
+  describe "GET #root" do
+    context "rendering the page" do
+      before :each do
+        get :root
+      end
+
+      it_behaves_like "HTTP 200 success"
+
+      it "renders the root template" do
+        expect(response).to render_template("root")
+      end
+    end
+
+    context "variable assignments" do
+      before :each do
+        @destination = create :destination
+        @last_shipped = create :api_response
+        get :root
+      end
+
+      it "assigns @last_shipped" do
+        expect(assigns(:last_shipped)).to eq @last_shipped
+        expect(assigns(:last_shipped).destination).to eq @destination
       end
     end
   end
