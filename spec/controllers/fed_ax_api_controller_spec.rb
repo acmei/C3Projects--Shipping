@@ -3,11 +3,11 @@ require "support/shared_controller_examples"
 
 RSpec.describe FedAxApiController, type: :controller do
   # setting up some variables that should permit valid interactions
-  let(:valid_package) { { weight: 1.5, height: 1.5, width: 1.5, depth: 1.5 } }
-  let(:another_valid_package) { { weight: 2.5, height: 2.5, width: 2.5, depth: 2.5 } }
+  let(:valid_package) { { weight: 1.5, height: 1.5, width: 1.5, depth: 1.5, product_id: 1 } }
+  let(:another_valid_package) { { weight: 2.5, height: 2.5, width: 2.5, depth: 2.5, product_id: 2 } }
   let(:valid_packages) { [valid_package, another_valid_package] }
   let(:valid_origin) { { country: "US", state: "WA", city: "Seattle", zip: "98101" } }
-  let(:valid_destination) { { country: "US", state: "IL", city: "Chicago", zip: "60652" } }
+  let(:valid_destination) { { country: "US", state: "IL", city: "Chicago", zip: "60652", order_id: 3 } }
   let(:shipping_choice_params) { { carrier: "UPS", service_type: "UPS Three-Day Select" } }
 
   # setting up some variables that should break stuff

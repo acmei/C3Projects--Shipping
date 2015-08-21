@@ -48,7 +48,7 @@ class FedAxApiController < ApplicationController
         carrier, service_type = shipping_choice_params
         shipping_details = shipping_selection(content[:quotes], carrier, service_type)
         log_entry = ApiResponse.create(shipping_details)
-        log_entry.log!(shipping_quote_params)
+        log_entry.log!(save_shipping_quote_params)
 
         content = {}
         content[:receipt] = shipping_details
@@ -93,6 +93,16 @@ class FedAxApiController < ApplicationController
       # Short version:
       #   Strong Parameters doesn't handle arrays of nested objects very well:
       #   NoMethodError: undefined method `permit' for #<Array:0x007f894dd8c830>
+
+      return result
+    end
+
+    def save_shipping_quote_params
+      result = {}
+
+      result[:packages] = params.permit("packages" => ["weight", "width", "height", "depth", "product_id"])["packages"]
+      result[:origin] = params.require("origin").permit("country", "state", "city", "zip")
+      result[:destination] = params.require("destination").permit("country", "state", "city", "zip", "order_id")
 
       return result
     end
