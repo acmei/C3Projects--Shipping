@@ -14,6 +14,11 @@ class FedAxApiController < ApplicationController
         status = :no_content
       end
 
+      # handling for receiving just the shipping quote for a given service type
+      if params[:shipping]
+        carrier, service_type = shipping_choice_params
+        content = shipping_selection(content[:quotes], carrier, service_type)
+      end
 
     # this is not a hash rocket. it is doing some magic thing where it's assigning
     # the error object to a variable. now we can access the error object's message
